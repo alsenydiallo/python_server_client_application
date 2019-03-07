@@ -3,19 +3,18 @@ import random
 import socket
 import threading
 import time
-from _thread import start_new_thread
-
-from coverage_greedy_enhanced import suggest_point, predict_location, print_list, read_grid_from_file
-from server import get_location_list
-from server import server_tag_location_list
+import pickle
 
 MAX_CLIENTS = 5
-n, m = 10, 10
-client_tag_location_list = server_tag_location_list
+list_of_clients = []
+PORT = 5000
+myLocation = (-1, -1)
 
 
 def main():
-    global client_tag_location_list
+    global list_of_clients
+    global PORT
+    global myLocation
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip", required=True)
     parser.add_argument("--port", required=True)
@@ -24,119 +23,107 @@ def main():
     args = parser.parse_args()
 
     if args.do_what == "run":
-        IP_address, Port, server = start_connection(args)
-
+        ip_address, port, server = start_connection(args)
+        PORT = port
         # check connection if established with server
         message = server.recv(2048)
         print("Server response: " + message.decode())
+        server.send("handshake".encode('utf-8'))
         if args.verbose:
             print("connection successfully established with server\n")
 
-        _, client_tag_location_list = read_grid_from_file("test.out")
-
         time.sleep(2)
+        count = 0
         while True:
             sleep_time = int(random.uniform(2, 10))
             try:
-                request = "ping"
-                send_request(request, server)
-                time.sleep(2)
-                request = "location"
-                send_request(request, server)
+
+                if count % 2 == 0:
+                    request = "ping"
+                    send_request(request, server)
+                    time.sleep(2)
+                    request = "location"
+                    location = send_request(request, server)
+                    myLocation = location
+                    count += 1
+                else:
+                    request = "client_list"
+                    server.send(request.encode('utf-8'))
+                    message = server.recv(2048)
+                    list_of_clients = pickle.loads(message)
+                    count +=1
+
             except Exception as e:
                 print("Server not reachable")
                 print(e)
                 print("\n")
-                time.sleep(2)
+                """ Start a peer to peer communication with the available clients"""
+                server.close()
+                p2p()
 
-                try:
-                    while True:
-                        print("Client establishing new connection...")
-                        server.close()
-
-                        # new connection
-                        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                        server.bind((IP_address, Port))
-                        server.listen(MAX_CLIENTS)
-
-                        while True:
-                            clientsocket, addr = server.accept()
-                            print("\n" + addr[0] + " connected\n")
-                            clientsocket.send('handshake '.encode('utf-8'))
-                            start_new_thread(handle_request, (clientsocket, addr))
-
-                except Exception as e:
-                    print(e)
-                    IP_address, Port, server = start_connection(args)
-                    message = server.recv(2048)
-                    print("Server response: " + message.decode())
-                    if args.verbose:
-                        print("connection successfully established with server\n")
-
-                    time.sleep(2)
-                    while True:
-                        sleep_time = int(random.uniform(2, 10))
-                        try:
-                            request = "ping"
-                            send_request(request, server)
-                            time.sleep(2)
-                            request = "location"
-                            send_request(request, server)
-                        except Exception as e:
-                            print("Server not reachable")
-                            print(e)
-                            print("\n")
-                            time.sleep(2)
-
-                            print("break")
-                            break
-
-                        time.sleep(sleep_time)
-                    continue
             time.sleep(sleep_time)
 
 
 def start_connection(args):
-    print("Client starting ...")
+    print("Client connecting to server ...")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    IP_address = str(args.ip)
-    Port = int(args.port)
-    server.connect((IP_address, Port))
-    print("Client running ...")
-    print("Connected at port: %d - ip %s\n" % (Port, IP_address))
-    return IP_address, Port, server
+    ip_address = str(args.ip)
+    port = int(args.port)
+    server.connect((ip_address, port))
+    print("Connected at port: %d - ip %s\n" % (port, ip_address))
+    return ip_address, port, server
 
 
 def send_request(request, server):
     print("Client request -> " + request)
     server.send(request.encode("utf-8"))
     message = server.recv(2048)
-    message = message.decode()
-    print("Server response: " + message)
+    print("Server response => " + message.decode())
     print()
+    return message
 
 
-def handle_request(clientsocket, addr):
+def get_host_name_ip():
+    try:
+        host_name = socket.gethostname()
+        host_ip = socket.gethostbyname(host_name)
+        return host_ip
+    except Exception as e:
+        print("Unable to get Hostname and IP")
+        print(e)
+
+
+def p2p():
+    print("Setting up peer - peer connection ...")
+    host_ip = get_host_name_ip()
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Create Datagram Socket
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # make socket reusable
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) # allow incoming broadcast
+    s.setblocking(False) # Set socket to non-blocking mode
+
+    try:
+        s.bind(('', PORT)) # Accept Connections on port
+        print("Accepting connections on port " + str(PORT))
+    except Exception as e:
+        print(e)
+        pass
+
     while True:
         try:
-            message = clientsocket.recv(2048)
-            message = message.decode()
-            thread_id = str(threading.currentThread().getName())
-            print("%s: < %s > %s" % (thread_id, addr[0], message))
-            if message == "ping":
-                clientsocket.send('awake !'.encode('utf-8'))
-
-            elif message == "location":
-                print("server computing location for " + thread_id + "/" + addr[0])
-                signal_received_at = suggest_point()
-                location = predict_location(client_tag_location_list, signal_received_at)
-                print("signal received at <" + signal_received_at.toString() + ">, computed location <" + location.toString() + ">")
-                clientsocket.send(location.toString().encode('utf-8'))
-
+            message, address = s.recvfrom(2024)
+            if message:
+                print("From: " + str(address) + " -> ")
+                print(pickle.loads(message))
+                time.sleep(2)
         except Exception as e:
-            print(e)
-            continue
+            print("No reachable peer ...")
+            time.sleep(2)
+
+        for c in list_of_clients:
+            address = (c[0], PORT)
+            # if host_ip != address[0]:
+            #     s.sendto(pickle.dumps(myLocation), address)
+            s.sendto(pickle.dumps(myLocation), address)
 
 
 # this is the standard boilerplate that calls the main() function
