@@ -9,6 +9,7 @@ MAX_CLIENTS = 5
 list_of_clients = []
 PORT = 5000
 myLocation = (-1, -1)
+peers_locations = {}
 
 
 def main():
@@ -109,21 +110,29 @@ def p2p():
         pass
 
     while True:
+        sleep_time = int(random.uniform(2, 10))
         try:
             message, address = s.recvfrom(2024)
             if message:
                 print("From: " + str(address) + " -> ")
                 print(pickle.loads(message))
-                time.sleep(2)
+                time.sleep(sleep_time)
+                add_to_dic(str(address), pickle.loads(message))
+                print(peers_locations)
         except Exception as e:
             print("No reachable peer ...")
-            time.sleep(2)
+            time.sleep(sleep_time)
 
         for c in list_of_clients:
             address = (c[0], PORT)
-            # if host_ip != address[0]:
-            #     s.sendto(pickle.dumps(myLocation), address)
-            s.sendto(pickle.dumps(myLocation), address)
+            if host_ip != address[0]:
+                msg = str(myLocation)
+                s.sendto(pickle.dumps(msg), address)
+
+
+def add_to_dic(address, location):
+    if address not in peers_locations:
+        peers_locations[address] = location
 
 
 # this is the standard boilerplate that calls the main() function
