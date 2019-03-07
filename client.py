@@ -52,7 +52,7 @@ def main():
                     server.send(request.encode('utf-8'))
                     message = server.recv(2048)
                     list_of_clients = pickle.loads(message)
-                    count +=1
+                    count += 1
 
             except Exception as e:
                 print("Server not reachable")
@@ -70,8 +70,16 @@ def start_connection(args):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ip_address = str(args.ip)
     port = int(args.port)
-    server.connect((ip_address, port))
-    print("Connected at port: %d - ip %s\n" % (port, ip_address))
+    try:
+        server.connect((ip_address, port))
+        print("Connected at port: %d - ip %s\n" % (port, ip_address))
+    except Exception as e:
+        print("Server not reachable")
+        print(e)
+        print("\n")
+        """ Start a peer to peer communication with the available client"""
+        p2p()
+
     return ip_address, port, server
 
 
@@ -97,28 +105,28 @@ def get_host_name_ip():
 def p2p():
     print("Setting up peer - peer connection ...")
     host_ip = get_host_name_ip()
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Create Datagram Socket
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # make socket reusable
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) # allow incoming broadcast
-    s.setblocking(False) # Set socket to non-blocking mode
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Create Datagram Socket
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # make socket reusable
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # allow incoming broadcast
+    s.setblocking(False)  # Set socket to non-blocking mode
 
     try:
-        s.bind(('', PORT)) # Accept Connections on port
+        s.bind(('', PORT))  # Accept Connections on port
         print("Accepting connections on port " + str(PORT))
     except Exception as e:
         print(e)
         pass
 
     while True:
-        sleep_time = int(random.uniform(2, 10))
+        sleep_time = int(random.uniform(2, 4))
         try:
             message, address = s.recvfrom(2024)
             if message:
-                print("From: " + str(address) + " -> ")
+                print("From: " + str(address))
                 print(pickle.loads(message))
-                time.sleep(sleep_time)
                 add_to_dic(str(address), pickle.loads(message))
-                print(peers_locations)
+                display_dic()
+                time.sleep(sleep_time)
         except Exception as e:
             print("No reachable peer ...")
             time.sleep(sleep_time)
@@ -134,6 +142,13 @@ def add_to_dic(address, location):
     if address not in peers_locations:
         peers_locations[address] = location
 
+
+def display_dic():
+    print("\nNear by peer")
+    for peer in peers_locations:
+        print(peer)
+    print("---------------------------------")
+    print("\n")
 
 # this is the standard boilerplate that calls the main() function
 if __name__ == '__main__':

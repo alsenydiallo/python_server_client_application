@@ -89,17 +89,17 @@ def main():
         if args.verbose:
             print("Server loading tag map ...")
 
-        # try:
-        #     global server_tag_location_list
-        #     tag_location_grid, server_tag_location_list = read_grid_from_file("test.out")
-        #     tx = getTX()
-        #
-        #     if args.verbose:
-        #         grid_stat(server_tag_location_list, tx)
-        #         print_grid_2(tag_location_grid, server_tag_location_list)
-        #         # print_list(server_tag_location_list)
-        # except Exception as e:
-        #     print(e)
+        try:
+            global server_tag_location_list
+            tag_location_grid, server_tag_location_list = read_grid_from_file("test.out")
+            tx = getTX()
+
+            if args.verbose:
+                grid_stat(server_tag_location_list, tx)
+                print_grid_2(tag_location_grid, server_tag_location_list)
+                # print_list(server_tag_location_list)
+        except Exception as e:
+            print(e)
 
         while True:
             clientsocket, addr = server.accept()
@@ -107,7 +107,7 @@ def main():
             print("\n" + addr[0] + " connected\n")
             clientsocket.send('handshake '.encode('utf-8'))
             start_new_thread(handle_request, (clientsocket, addr))
-            print(list_of_clients)
+            # print(list_of_clients)
 
 
 # this is the standard boilerplate that calls the main() function
