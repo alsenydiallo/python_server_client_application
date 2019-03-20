@@ -145,6 +145,7 @@ def p2p():
         print("Accepting connections on port " + str(PORT))
         # mimic that the device has entered the covered zone and is moving
         if myLocation.equal(Point(-1,-1,0)):
+            print("Initializing mylocation")
             myLocation = suggest_point()
 
     except Exception as e:
@@ -170,9 +171,9 @@ def p2p():
                 display_dic()
                 if debug: time.sleep(sleep_time)
                 # compute new location coordinate
-                print("my coord - " + myLocation.toString())
-                location = predict_location(peers_locations_list(), myLocation)
-                print("My new coord - " + location.toString())
+                # print("my coord - " + myLocation.toString())
+                # location = predict_location(peers_locations_list(), myLocation)
+                # print("My new coord - " + location.toString())
         except Exception as e:
             print("No reachable peer ...")
             print(e)
