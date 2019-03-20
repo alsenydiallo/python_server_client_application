@@ -445,8 +445,8 @@ def predict_location(tag_location_list, signal_received_at, tx=None, myN=None, m
     if tx is None: Tx = getTX()
     else: Tx = tx
 
-    if myN is None: n = myN
-    if myM is None: m = myM
+    if myN is not None: n = myN
+    if myM is not None: m = myM
 
     tag_list = find_tag(signal_received_at, tag_location_list, Tx, n, m)
     list_len = len(tag_list)

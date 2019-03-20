@@ -179,7 +179,7 @@ def p2p():
                     # compute new location coordinate
                     print("my coord - " + myLocation.toString())
                     location_list = peers_locations_list()
-                    location = predict_location(location_list, myLocation, (deviceTx * 2))
+                    location = predict_location(location_list, myLocation, (deviceTx * 2), 10, 10)
                     print("My new coord - " + location.toString())
                     myLocation = location
         except Exception as e:
