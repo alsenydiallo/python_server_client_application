@@ -161,8 +161,6 @@ def p2p():
 
         for c in list_of_clients:
             address = (c[0], PORT)
-            print(address[0])
-            print(host_ip)
             if str(host_ip) != str(address[0]):
                 msg = myLocation.toString()
                 s.sendto(pickle.dumps(msg), address)
@@ -172,15 +170,16 @@ def p2p():
         try:
             message, address = s.recvfrom(2024)
             if message:
-                print("Received coord from: " + str(address) + " -> " + pickle.loads(message))
-                # print(pickle.loads(message))
-                add_to_dic(str(address), pickle.loads(message))
-                display_dic()
-                if debug: time.sleep(sleep_time)
-                # compute new location coordinate
-                # print("my coord - " + myLocation.toString())
-                # location = predict_location(peers_locations_list(), myLocation)
-                # print("My new coord - " + location.toString())
+                if host_ip != address:
+                    print("Received coord from: " + str(address) + " -> " + pickle.loads(message))
+                    # print(pickle.loads(message))
+                    add_to_dic(str(address), pickle.loads(message))
+                    display_dic()
+                    if debug: time.sleep(sleep_time)
+                    # compute new location coordinate
+                    # print("my coord - " + myLocation.toString())
+                    # location = predict_location(peers_locations_list(), myLocation)
+                    # print("My new coord - " + location.toString())
         except Exception as e:
             print("No reachable peer ...")
             print(e)
@@ -189,7 +188,6 @@ def p2p():
 
 def add_to_dic(address, location):
     loc = extract_location(location)
-    loc.display()
     d = loc.distance(myLocation)
     if d >= 0:
         peers_locations[address] = loc
