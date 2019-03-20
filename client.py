@@ -144,7 +144,11 @@ def p2p():
         s.bind(('', PORT))  # Accept Connections on port
         print("Accepting connections on port " + str(PORT))
         # mimic that the device has entered the covered zone and is moving
-        if myLocation.equal(Point(-1,-1,0)):
+
+        print("My location")
+        myLocation.display()
+        print("\n")
+        if myLocation.equal(Point(-1,-1,0)) == 0:
             print("Initializing mylocation")
             myLocation = suggest_point()
 
@@ -195,8 +199,8 @@ def peers_locations_list():
 
 
 def display_dic():
-    print("-------------------------------------")
-    print("\nNear by peer - most recent data")
+    print("\n-------------------------------------")
+    print("Near by peer - most recent data")
     for peer in peers_locations:
         loc = peers_locations[peer]
         print(str(peer) + "-> " + loc.toString())
