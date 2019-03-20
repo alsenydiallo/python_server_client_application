@@ -107,12 +107,16 @@ def send_request(request, server):
     print()
 
     if request == "location":
-        temp = message.decode()
-        int_list = [float(s) for s in re.findall(r'-?\d+\.?\d*', temp)]
-        location = Point(int_list[0], int_list[1], 0)
-        return location
+        return extract_location(message)
 
     return message
+
+
+def extract_location(message):
+    temp = message.decode()
+    int_list = [float(s) for s in re.findall(r'-?\d+\.?\d*', temp)]
+    location = Point(int_list[0], int_list[1], 0)
+    return location
 
 
 def get_host_name_ip():
@@ -173,10 +177,11 @@ def p2p():
 
 
 def add_to_dic(address, location):
-    d = location.distance(myLocation)
+    loc = extract_location(location)
+    print(loc)
+    d = loc.distance(myLocation)
     if d >= 0:
         peers_locations[address] = location
-
 
 def peers_locations_list():
     global peers_locations
