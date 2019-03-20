@@ -151,6 +151,7 @@ def p2p():
         if myLocation.equal(Point(-1,-1,0)) == 0:
             print("Initializing mylocation")
             myLocation = suggest_point()
+            myLocation.display()
 
     except Exception as e:
         print(e)
