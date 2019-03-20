@@ -17,7 +17,7 @@ Tx = 5
 debug = False
 log_file_path = "log.client.txt"
 peer_log_file_path = "log.peer.txt"
-
+peers_locations = []
 
 def main():
     global list_of_clients
@@ -72,7 +72,7 @@ def main():
                     count += 1
 
             except Exception as e:
-                print("Server not reachable")
+                print("Server not reachable <disconnected>")
                 print(e)
                 print("\n")
                 """ Start a peer to peer communication with the available clients"""
@@ -91,7 +91,7 @@ def start_connection(args):
         server.connect((ip_address, port))
         print("Connected at port: %d - ip %s\n" % (port, ip_address))
     except Exception as e:
-        print("Server not reachable")
+        print("Server not reachable <not up and running>")
         print(e)
         print("\n")
         """ Start a peer to peer communication with the available client"""
@@ -139,6 +139,7 @@ def p2p():
     try:
         s.bind(('', PORT))  # Accept Connections on port
         print("Accepting connections on port " + str(PORT))
+        # mimic that the device has entered the covered zone and is moving
         if myLocation.equal(Point(-1,-1,0)):
             myLocation = suggest_point()
 
@@ -156,6 +157,10 @@ def p2p():
                 add_to_dic(str(address), pickle.loads(message))
                 display_dic()
                 if debug: time.sleep(sleep_time)
+                # compute new location coordinate
+                print("my coord - " + myLocation.toString())
+                location = predict_location(peers_locations_list(), myLocation)
+                print("My new coord - " + location.toString())
         except Exception as e:
             print("No reachable peer ...")
             if debug: time.sleep(sleep_time)
@@ -168,18 +173,22 @@ def p2p():
 
 
 def add_to_dic(address, location):
-    if address not in peers_locations:
-        # peers_locations[address] = location
-        d = location.distance(myLocation)
-        if d >= 0:
-            peers_locations[address] = location
+    d = location.distance(myLocation)
+    if d >= 0:
+        peers_locations[address] = location
 
+
+def peers_locations_list():
+    global peers_locations
+    for peer in list_of_clients:
+        peers_locations.append(list_of_clients[peer])
+    return peers_locations
 
 def display_dic():
-    print("\nNear by peer")
+    print("\nNear by peer - most recent data")
     for peer in peers_locations:
         print(peer)
-    print("---------------------------------")
+    print("-------------------------------------------")
     print("\n")
 
 
