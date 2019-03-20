@@ -179,10 +179,10 @@ def p2p():
 
 def add_to_dic(address, location):
     loc = extract_location(location)
-    print(loc)
+    loc.display()
     d = loc.distance(myLocation)
     if d >= 0:
-        peers_locations[address] = loc
+        peers_locations.append(loc)
 
 def peers_locations_list():
     global peers_locations
