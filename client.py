@@ -17,7 +17,7 @@ Tx = 5
 debug = False
 log_file_path = "log.client.txt"
 peer_log_file_path = "log.peer.txt"
-peers_locations = []
+
 
 def main():
     global list_of_clients
@@ -182,13 +182,14 @@ def add_to_dic(address, location):
     loc.display()
     d = loc.distance(myLocation)
     if d >= 0:
-        peers_locations.append(loc)
+        peers_locations[address] = loc
 
 def peers_locations_list():
-    global peers_locations
+    global locations
     for peer in list_of_clients:
-        peers_locations.append(list_of_clients[peer])
-    return peers_locations
+        locations.append(list_of_clients[peer])
+    return locations
+
 
 def display_dic():
     print("\nNear by peer - most recent data")
