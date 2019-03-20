@@ -184,8 +184,9 @@ def add_to_dic(address, location):
     if d >= 0:
         peers_locations[address] = loc
 
+
 def peers_locations_list():
-    global locations
+    locations = ()
     for peer in list_of_clients:
         locations.append(list_of_clients[peer])
     return locations
@@ -194,7 +195,8 @@ def peers_locations_list():
 def display_dic():
     print("\nNear by peer - most recent data")
     for peer in peers_locations:
-        print(peer)
+        loc = peers_locations[peer]
+        print(str(peer) + "-> " + loc.toString())
     print("-------------------------------------------")
     print("\n")
 
