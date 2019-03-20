@@ -107,13 +107,14 @@ def send_request(request, server):
     print()
 
     if request == "location":
+        message = message.decode()
         return extract_location(message)
 
     return message
 
 
 def extract_location(message):
-    temp = message.decode()
+    temp = message
     int_list = [float(s) for s in re.findall(r'-?\d+\.?\d*', temp)]
     location = Point(int_list[0], int_list[1], 0)
     return location
@@ -172,7 +173,7 @@ def p2p():
         for c in list_of_clients:
             address = (c[0], PORT)
             if host_ip != address[0]:
-                msg = str(myLocation)
+                msg = myLocation
                 s.sendto(pickle.dumps(msg), address)
 
 
