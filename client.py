@@ -4,18 +4,26 @@ import socket
 import threading
 import time
 import pickle
+import re
+from coverage_greedy_enhanced import *
+from point import *
 
 MAX_CLIENTS = 5
 list_of_clients = []
 PORT = 5000
-myLocation = (-1, -1)
+myLocation = Point(-1,-1,0)
 peers_locations = {}
+Tx = 5
+debug = False
+log_file_path = "log.client.txt"
+peer_log_file_path = "log.peer.txt"
 
 
 def main():
     global list_of_clients
     global PORT
     global myLocation
+    global debug
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip", required=True)
     parser.add_argument("--port", required=True)
@@ -31,21 +39,30 @@ def main():
         print("Server response: " + message.decode())
         server.send("handshake".encode('utf-8'))
         if args.verbose:
+            debug = args.verbose
             print("connection successfully established with server\n")
 
-        time.sleep(2)
+        if debug:
+            time.sleep(2)
+
         count = 0
         while True:
-            sleep_time = int(random.uniform(2, 10))
+            if debug: sleep_time = int(random.uniform(2, 10))
             try:
 
                 if count % 2 == 0:
                     request = "ping"
                     send_request(request, server)
-                    time.sleep(2)
+                    if debug: time.sleep(2)
                     request = "location"
+
+                    start = time.time()
                     location = send_request(request, server)
+                    stop = time.time()
+                    diff = stop - start
+                    log_to_file(str(diff)+"\n")
                     myLocation = location
+                    myLocation.display()
                     count += 1
                 else:
                     request = "client_list"
@@ -62,7 +79,7 @@ def main():
                 server.close()
                 p2p()
 
-            time.sleep(sleep_time)
+            if debug: time.sleep(sleep_time)
 
 
 def start_connection(args):
@@ -89,6 +106,13 @@ def send_request(request, server):
     message = server.recv(2048)
     print("Server response => " + message.decode())
     print()
+
+    if request == "location":
+        temp = message.decode()
+        int_list = [float(s) for s in re.findall(r'-?\d+\.?\d*', temp)]
+        location = Point(int_list[0], int_list[1], 0)
+        return location
+
     return message
 
 
@@ -103,6 +127,8 @@ def get_host_name_ip():
 
 
 def p2p():
+    global debug
+    global myLocation
     print("Setting up peer - peer connection ...")
     host_ip = get_host_name_ip()
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Create Datagram Socket
@@ -113,12 +139,15 @@ def p2p():
     try:
         s.bind(('', PORT))  # Accept Connections on port
         print("Accepting connections on port " + str(PORT))
+        if myLocation.equal(Point(-1,-1,0)):
+            myLocation = suggest_point()
+
     except Exception as e:
         print(e)
         pass
 
     while True:
-        sleep_time = int(random.uniform(2, 4))
+        if debug: sleep_time = int(random.uniform(2, 4))
         try:
             message, address = s.recvfrom(2024)
             if message:
@@ -126,10 +155,10 @@ def p2p():
                 print(pickle.loads(message))
                 add_to_dic(str(address), pickle.loads(message))
                 display_dic()
-                time.sleep(sleep_time)
+                if debug: time.sleep(sleep_time)
         except Exception as e:
             print("No reachable peer ...")
-            time.sleep(sleep_time)
+            if debug: time.sleep(sleep_time)
 
         for c in list_of_clients:
             address = (c[0], PORT)
@@ -140,7 +169,10 @@ def p2p():
 
 def add_to_dic(address, location):
     if address not in peers_locations:
-        peers_locations[address] = location
+        # peers_locations[address] = location
+        d = location.distance(myLocation)
+        if d >= 0:
+            peers_locations[address] = location
 
 
 def display_dic():
@@ -149,6 +181,12 @@ def display_dic():
         print(peer)
     print("---------------------------------")
     print("\n")
+
+
+def log_to_file(latency):
+    fd = open(log_file_path, "a+")
+    fd.write(latency)
+    fd.close()
 
 # this is the standard boilerplate that calls the main() function
 if __name__ == '__main__':
