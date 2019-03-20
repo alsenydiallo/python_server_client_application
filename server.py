@@ -94,9 +94,6 @@ def main():
         ip_address = str(args.ip)
         port = int(args.port)
 
-        server.bind((ip_address, port))
-        server.listen(MAX_CLIENTS)
-
         if args.verbose:
             debug = args.verbose
 
@@ -107,14 +104,15 @@ def main():
             global server_tag_location_list
             tag_location_grid, server_tag_location_list = read_grid_from_file("test.out")
             tx = getTX()
-
+            grid_stat(server_tag_location_list, tx)
+            server.bind((ip_address, port))
+            server.listen(MAX_CLIENTS)
             print("Server up successfully !")
             print("listening on port: %d - ip %s\n" % (port, ip_address))
 
             if debug:
-                grid_stat(server_tag_location_list, tx)
                 print_grid_2(tag_location_grid, server_tag_location_list)
-                # print_list(server_tag_location_list)
+                print_list(server_tag_location_list)
         except Exception as e:
             print(e)
 

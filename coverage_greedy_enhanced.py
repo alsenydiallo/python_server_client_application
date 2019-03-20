@@ -18,7 +18,6 @@ score_table = set()  # contains precomputed score values
 input_filename = ""
 output_filename = ""
 
-
 # ********************************************************************************
 # takes a list of points and returns a 2D array [][]
 def convert_list_to_grid(p_list):
@@ -437,9 +436,12 @@ def precompute_score(Tx):
 # Predict location of device with the given grid layout
 # tag_location_list: contains the location of all deployed tag on the gride
 # signal_received_at: the location at which the tag reflected signal was read from
-def predict_location(tag_location_list, signal_received_at):
+def predict_location(tag_location_list, signal_received_at, tx=None):
+    global Tx
     location = Point(0, 0, 1)
     error = 0.0
+    if tx is None: Tx = getTX()
+    else: Tx = tx
     tag_list = find_tag(signal_received_at, tag_location_list, Tx, n, m)
     list_len = len(tag_list)
 
@@ -519,6 +521,8 @@ def run_predict_location(tag_location_list, sample_points):
 
 def getTX():
     return Tx
+def setTx(tx):
+    Tx = tx
 # ********************************************************************************
 def main():
     global n, m

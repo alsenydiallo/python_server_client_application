@@ -177,7 +177,8 @@ def p2p():
                     if debug: time.sleep(sleep_time)
                     # compute new location coordinate
                     print("my coord - " + myLocation.toString())
-                    location = predict_location(peers_locations_list(), myLocation)
+                    location_list = peers_locations_list()
+                    location = predict_location(location_list, myLocation, (Tx*2))
                     print("My new coord - " + location.toString())
                     myLocation = location
         except Exception as e:
@@ -189,7 +190,7 @@ def p2p():
 def add_to_dic(address, location):
     loc = extract_location(location)
     d = loc.distance(myLocation)
-    if d >= 0:
+    if 0 <= d <= (Tx * 2):
         peers_locations[address] = loc
     return loc
 
@@ -198,6 +199,7 @@ def peers_locations_list():
     locations = []
     for peer in peers_locations:
         locations.append(peers_locations[peer])
+
     return locations
 
 
