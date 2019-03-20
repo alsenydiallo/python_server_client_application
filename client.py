@@ -156,8 +156,8 @@ def p2p():
         try:
             message, address = s.recvfrom(2024)
             if message:
-                print("From: " + str(address))
-                print(pickle.loads(message))
+                print("Received coord from: " + str(address))
+                # print(pickle.loads(message))
                 add_to_dic(str(address), pickle.loads(message))
                 display_dic()
                 if debug: time.sleep(sleep_time)
@@ -173,7 +173,7 @@ def p2p():
         for c in list_of_clients:
             address = (c[0], PORT)
             if host_ip != address[0]:
-                msg = myLocation
+                msg = str(myLocation)
                 s.sendto(pickle.dumps(msg), address)
 
 
@@ -182,7 +182,7 @@ def add_to_dic(address, location):
     print(loc)
     d = loc.distance(myLocation)
     if d >= 0:
-        peers_locations[address] = location
+        peers_locations[address] = loc
 
 def peers_locations_list():
     global peers_locations
