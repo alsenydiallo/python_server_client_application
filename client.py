@@ -62,7 +62,6 @@ def main():
                     diff = stop - start
                     log_to_file(str(diff)+"\n")
                     myLocation = location
-                    myLocation.display()
                     count += 1
                 else:
                     request = "client_list"
@@ -163,6 +162,7 @@ def p2p():
                 print("My new coord - " + location.toString())
         except Exception as e:
             print("No reachable peer ...")
+            print(e)
             if debug: time.sleep(sleep_time)
 
         for c in list_of_clients:
