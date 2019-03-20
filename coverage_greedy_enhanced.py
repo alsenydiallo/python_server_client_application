@@ -436,12 +436,18 @@ def precompute_score(Tx):
 # Predict location of device with the given grid layout
 # tag_location_list: contains the location of all deployed tag on the gride
 # signal_received_at: the location at which the tag reflected signal was read from
-def predict_location(tag_location_list, signal_received_at, tx=None):
+def predict_location(tag_location_list, signal_received_at, tx=None, myN=None, myM=None):
     global Tx
+    global n
+    global m
     location = Point(0, 0, 1)
     error = 0.0
     if tx is None: Tx = getTX()
     else: Tx = tx
+
+    if myN is None: n = myN
+    if myM is None: m = myM
+
     tag_list = find_tag(signal_received_at, tag_location_list, Tx, n, m)
     list_len = len(tag_list)
 

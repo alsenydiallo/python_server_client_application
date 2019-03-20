@@ -8,12 +8,13 @@ import re
 from coverage_greedy_enhanced import *
 from point import *
 
+
 MAX_CLIENTS = 5
 list_of_clients = []
 PORT = 5000
 myLocation = Point(-1,-1,0)
 peers_locations = {}
-Tx = 5
+deviceTx = 5
 debug = False
 log_file_path = "log.client.txt"
 peer_log_file_path = "log.peer.txt"
@@ -178,7 +179,7 @@ def p2p():
                     # compute new location coordinate
                     print("my coord - " + myLocation.toString())
                     location_list = peers_locations_list()
-                    location = predict_location(location_list, myLocation, (Tx*2))
+                    location = predict_location(location_list, myLocation, (deviceTx * 2))
                     print("My new coord - " + location.toString())
                     myLocation = location
         except Exception as e:
@@ -190,7 +191,7 @@ def p2p():
 def add_to_dic(address, location):
     loc = extract_location(location)
     d = loc.distance(myLocation)
-    if 0 <= d <= (Tx * 2):
+    if 0 <= d <= (deviceTx * 2):
         peers_locations[address] = loc
     return loc
 
