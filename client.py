@@ -196,8 +196,8 @@ def add_to_dic(address, location):
 
 def peers_locations_list():
     locations = []
-    for peer in list_of_clients:
-        locations.append(list_of_clients[peer])
+    for peer in peers_locations:
+        locations.append(peers_locations[peer])
     return locations
 
 
