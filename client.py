@@ -152,7 +152,15 @@ def p2p():
         pass
 
     while True:
+
+        for c in list_of_clients:
+            address = (c[0], PORT)
+            if host_ip != address[0]:
+                msg = str(myLocation)
+                s.sendto(pickle.dumps(msg), address)
+
         if debug: sleep_time = int(random.uniform(2, 4))
+
         try:
             message, address = s.recvfrom(2024)
             if message:
@@ -170,16 +178,9 @@ def p2p():
             print(e)
             if debug: time.sleep(sleep_time)
 
-        for c in list_of_clients:
-            address = (c[0], PORT)
-            if host_ip != address[0]:
-                msg = str(myLocation)
-                s.sendto(pickle.dumps(msg), address)
-
 
 def add_to_dic(address, location):
     loc = extract_location(location)
-    loc.display()
     d = loc.distance(myLocation)
     if d >= 0:
         peers_locations[address] = loc
@@ -193,11 +194,12 @@ def peers_locations_list():
 
 
 def display_dic():
+    print("-------------------------------------")
     print("\nNear by peer - most recent data")
     for peer in peers_locations:
         loc = peers_locations[peer]
         print(str(peer) + "-> " + loc.toString())
-    print("-------------------------------------------")
+    print("-------------------------------------")
     print("\n")
 
 
