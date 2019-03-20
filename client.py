@@ -163,7 +163,7 @@ def p2p():
             address = (c[0], PORT)
             print(address[0])
             print(host_ip)
-            if host_ip != address[0]:
+            if str(host_ip) != str(address[0]):
                 msg = myLocation.toString()
                 s.sendto(pickle.dumps(msg), address)
 
