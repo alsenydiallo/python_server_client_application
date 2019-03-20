@@ -164,7 +164,7 @@ def p2p():
             print(address[0])
             print(host_ip)
             if host_ip != address[0]:
-                msg = str(myLocation)
+                msg = myLocation.toString()
                 s.sendto(pickle.dumps(msg), address)
 
         if debug: sleep_time = int(random.uniform(2, 4))
@@ -189,10 +189,12 @@ def p2p():
 
 def add_to_dic(address, location):
     loc = extract_location(location)
+    loc.display()
     d = loc.distance(myLocation)
     if d >= 0:
         peers_locations[address] = loc
     return loc
+
 
 def peers_locations_list():
     locations = ()

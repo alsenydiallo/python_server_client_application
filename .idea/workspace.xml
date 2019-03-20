@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a6f534f-0468-4956-9298-b297c7c4259f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/log.client.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log.client.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/log.server.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log.server.txt" afterDir="false" />
@@ -14,7 +15,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/thesis_application$client.coverage" NAME="client Coverage Results" MODIFIED="1553052253463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thesis_application$client.coverage" NAME="client Coverage Results" MODIFIED="1553058935260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/thesis_application$server.coverage" NAME="server Coverage Results" MODIFIED="1553044277535" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
@@ -75,8 +76,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/client.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="130">
-                  <caret line="172" column="93" selection-start-line="172" selection-start-column="93" selection-end-line="172" selection-end-column="93" />
+                <state relative-caret-position="181">
+                  <caret line="49" selection-start-line="49" selection-end-line="49" />
                   <folding>
                     <element signature="e#0#15#0" expanded="true" />
                   </folding>
@@ -163,7 +164,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553057603970" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553058932190" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -184,7 +185,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.server">
+  <component name="RunManager" selected="Python.client">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="thesis_application" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -274,8 +275,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.server" />
         <item itemvalue="Python.client" />
+        <item itemvalue="Python.server" />
         <item itemvalue="Python.coverage_greedy_enhanced" />
       </list>
     </recent_temporary>
@@ -292,16 +293,15 @@
       <updated>1551743961524</updated>
       <workItem from="1551743965885" duration="30629000" />
       <workItem from="1551902110162" duration="20151000" />
-      <workItem from="1553030399352" duration="12770000" />
+      <workItem from="1553030399352" duration="14093000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="63550000" />
+    <option name="totallyTimeSpent" value="64873000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1282" y="23" width="1916" height="1052" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13820705" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -312,8 +312,8 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.234375" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.340625" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.234375" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.340625" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -426,10 +426,36 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="list_of_clients" language="Python" />
+        <watch expression="msg" language="Python" />
+        <watch expression="myLocation" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>myLocation</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>msg</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>list_of_clients</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test.out">
@@ -495,8 +521,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="172" column="93" selection-start-line="172" selection-start-column="93" selection-end-line="172" selection-end-column="93" />
+        <state relative-caret-position="181">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
