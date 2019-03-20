@@ -149,9 +149,9 @@ def p2p():
         myLocation.display()
         print("\n")
         if myLocation.equal(Point(-1,-1,0)) == 0:
-            print("Initializing mylocation")
+            if debug: print("Initializing mylocation")
             myLocation = suggest_point()
-            myLocation.display()
+            if debug: myLocation.display()
 
     except Exception as e:
         print(e)
@@ -172,14 +172,14 @@ def p2p():
             if message:
                 if host_ip != address:
                     print("Received coord from: " + str(address) + " -> " + pickle.loads(message))
-                    # print(pickle.loads(message))
                     add_to_dic(str(address), pickle.loads(message))
                     display_dic()
                     if debug: time.sleep(sleep_time)
                     # compute new location coordinate
-                    # print("my coord - " + myLocation.toString())
-                    # location = predict_location(peers_locations_list(), myLocation)
-                    # print("My new coord - " + location.toString())
+                    print("my coord - " + myLocation.toString())
+                    location = predict_location(peers_locations_list(), myLocation)
+                    print("My new coord - " + location.toString())
+                    myLocation = location
         except Exception as e:
             print("No reachable peer ...")
             print(e)
