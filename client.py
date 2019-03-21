@@ -191,19 +191,23 @@ def compute_client_location(tag_list, signal_received_at, deviceTx):
     location = Point(0, 0, 1)
     list_len = len(tag_list)
 
-    if list_len == 1:
-        location = tag_list[0]
-    elif list_len == 2:
-        tag_heap = heap_of_tags(tag_list, signal_received_at)
-        k1, tag1 = heapq.heappop(tag_heap)
-        k2, tag2 = heapq.heappop(tag_heap)
-        location = score_func_case_2_helper(signal_received_at, tag1, tag2, deviceTx)
-    elif list_len >= 3:
-        tag_heap = heap_of_tags(tag_list, signal_received_at)
-        k1, tag1 = heapq.heappop(tag_heap)
-        k2, tag2 = heapq.heappop(tag_heap)
-        k3, tag3 = heapq.heappop(tag_heap)
-        location = compute_matrix(tag1, tag2, tag3, signal_received_at)
+    try:
+        if list_len == 1:
+            location = tag_list[0]
+        elif list_len == 2:
+            tag_heap = heap_of_tags(tag_list, signal_received_at)
+            k1, tag1 = heapq.heappop(tag_heap)
+            k2, tag2 = heapq.heappop(tag_heap)
+            location = score_func_case_2_helper(signal_received_at, tag1, tag2, deviceTx)
+        elif list_len >= 3:
+            tag_heap = heap_of_tags(tag_list, signal_received_at)
+            k1, tag1 = heapq.heappop(tag_heap)
+            k2, tag2 = heapq.heappop(tag_heap)
+            k3, tag3 = heapq.heappop(tag_heap)
+            location = compute_matrix(tag1, tag2, tag3, signal_received_at)
+    except Exception as e:
+        print("Error in compute location")
+        print(e)
 
     return location
 
