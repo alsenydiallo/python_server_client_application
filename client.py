@@ -12,12 +12,12 @@ from point import *
 MAX_CLIENTS = 5
 list_of_clients = []
 PORT = 5000
-myLocation = Point(-1,-1,0)
+myLocation = Point(0,0,0)
 peers_locations = {}
 deviceTx = 5
 debug = False
-log_file_path = "log.client.txt"
-peer_log_file_path = "log.peer.txt"
+latency_fpath = "log.client.latency.txt"
+correctness_fpath = "log.client.correct.txt"
 
 
 def main():
@@ -61,7 +61,7 @@ def main():
                     location = send_request(request, server)
                     stop = time.time()
                     diff = stop - start
-                    log_to_file(str(diff)+"\n")
+                    log_to_file(latency_fpath, str(diff))
                     myLocation = location
                     count += 1
                 else:
@@ -148,10 +148,6 @@ def p2p():
 
         print("Current location " + myLocation.toString())
         print("\n")
-        if myLocation.equal(Point(-1,-1,0)) == 0:
-            if debug: print("Initializing myLocation")
-            myLocation = suggest_point()
-            if debug: print("Initialized location " + myLocation.toString())
 
     except Exception as e:
         print(e)
@@ -171,15 +167,17 @@ def p2p():
             message, address = s.recvfrom(2024)
             if message:
                 if host_ip != address:
-                    print("Received coord from: " + str(address) + " -> " + pickle.loads(message))
+                    # print("Received coord from: " + str(address) + " -> " + pickle.loads(message))
                     add_to_dic(str(address), pickle.loads(message))
                     display_dic()
-                    if debug: time.sleep(sleep_time)
+                    if debug:time.sleep(sleep_time)
                     # compute new location coordinate
-                    print("my coord - " + myLocation.toString())
+                    if debug:print("Current coord - " + myLocation.toString())
                     location_list = peers_locations_list()
                     location = compute_client_location(location_list, myLocation, deviceTx)
-                    print("My new coord - " + location.toString())
+                    if debug:print("New computed coord - " + location.toString())
+                    diff = myLocation.distance(location)
+                    log_to_file(correctness_fpath, str(diff))
                     myLocation = location
         except Exception as e:
             print("No reachable peer ...")
@@ -209,7 +207,11 @@ def compute_client_location(tag_list, signal_received_at, deviceTx):
         print("Error in compute location")
         print(e)
 
+    if location.equal(Point(-1,-1,0)) == 0:
+        location = suggest_point()
+
     return location
+
 
 def add_to_dic(address, location):
     loc = extract_location(location)
@@ -237,10 +239,12 @@ def display_dic():
     print("\n")
 
 
-def log_to_file(latency):
+def log_to_file(log_file_path, data):
+    buffer = str(str(data) + "\n")
     fd = open(log_file_path, "a+")
-    fd.write(latency)
+    fd.write(buffer)
     fd.close()
+
 
 # this is the standard boilerplate that calls the main() function
 if __name__ == '__main__':
