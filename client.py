@@ -146,13 +146,12 @@ def p2p():
         print("Accepting connections on port " + str(PORT))
         # mimic that the device has entered the covered zone and is moving
 
-        print("My location")
-        myLocation.display()
+        print("Current location " + myLocation.toString())
         print("\n")
         if myLocation.equal(Point(-1,-1,0)) == 0:
-            if debug: print("Initializing mylocation")
+            if debug: print("Initializing myLocation")
             myLocation = suggest_point()
-            if debug: myLocation.display()
+            if debug: print("Initialized location " + myLocation.toString())
 
     except Exception as e:
         print(e)
@@ -179,7 +178,7 @@ def p2p():
                     # compute new location coordinate
                     print("my coord - " + myLocation.toString())
                     location_list = peers_locations_list()
-                    location = predict_location(location_list, myLocation, (deviceTx * 2), 10, 10)
+                    location = compute_client_location(location_list, myLocation, deviceTx)
                     print("My new coord - " + location.toString())
                     myLocation = location
         except Exception as e:
@@ -187,6 +186,26 @@ def p2p():
             print(e)
             if debug: time.sleep(sleep_time)
 
+
+def compute_client_location(tag_list, signal_received_at, deviceTx):
+    location = Point(0, 0, 1)
+    list_len = len(tag_list)
+
+    if list_len == 1:
+        location = tag_list[0]
+    elif list_len == 2:
+        tag_heap = heap_of_tags(tag_list, signal_received_at)
+        k1, tag1 = heapq.heappop(tag_heap)
+        k2, tag2 = heapq.heappop(tag_heap)
+        location = score_func_case_2_helper(signal_received_at, tag1, tag2, deviceTx)
+    elif list_len >= 3:
+        tag_heap = heap_of_tags(tag_list, signal_received_at)
+        k1, tag1 = heapq.heappop(tag_heap)
+        k2, tag2 = heapq.heappop(tag_heap)
+        k3, tag3 = heapq.heappop(tag_heap)
+        location = compute_matrix(tag1, tag2, tag3, signal_received_at)
+
+    return location
 
 def add_to_dic(address, location):
     loc = extract_location(location)
