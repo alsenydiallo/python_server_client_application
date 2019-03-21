@@ -102,7 +102,7 @@ def main():
 
         try:
             global server_tag_location_list
-            tag_location_grid, server_tag_location_list = read_grid_from_file("test.out")
+            tag_location_grid, server_tag_location_list = read_grid_from_file("20x20_50k_3tx.txt")
             tx = getTX()
             grid_stat(server_tag_location_list, tx)
             server.bind((ip_address, port))
