@@ -18,7 +18,8 @@ deviceTx = 5
 debug = False
 latency_fpath = "log.client.latency.txt"
 correctness_fpath = "log.client.correct.txt"
-
+n = 10
+m = 10
 
 def main():
     global list_of_clients
@@ -153,6 +154,7 @@ def p2p():
         print(e)
         pass
 
+    count = 0
     while True:
 
         for c in list_of_clients:
@@ -171,9 +173,18 @@ def p2p():
                     add_to_dic(str(address), pickle.loads(message))
                     display_dic()
                     if debug:time.sleep(sleep_time)
-                    # compute new location coordinate
+
                     if debug:print("Current coord - " + myLocation.toString())
                     location_list = peers_locations_list()
+
+                    # move location of device
+                    if count % 2 == 0:
+                        myLocation = move_x(myLocation)
+                        count +=1
+                    elif count % 2 == 1:
+                        myLocation = move_y(myLocation)
+                        count +=1
+
                     location = compute_client_location(location_list, myLocation, deviceTx)
                     if debug:print("New computed coord - " + location.toString())
                     diff = myLocation.distance(location)
@@ -183,6 +194,21 @@ def p2p():
             print("No reachable peer ...")
             print(e)
             if debug: time.sleep(sleep_time)
+
+
+def move_x(location):
+    if location.x-1 < n:
+        location.x += 1
+    else: location.x -= 1
+    return location
+
+
+def move_y(location):
+    if location.y - 1 < m:
+        location.y += 1
+    else:
+        location.y -= 1
+    return location
 
 
 def compute_client_location(tag_list, signal_received_at, deviceTx):
@@ -208,9 +234,15 @@ def compute_client_location(tag_list, signal_received_at, deviceTx):
         print(e)
 
     if location.equal(Point(-1,-1,0)) == 0:
-        location = suggest_point()
+        location = suggest_location()
 
     return location
+
+
+def suggest_location():
+    x = int(random.uniform(0, n))
+    y = int(random.uniform(0, m))
+    return Point(x, y, 1)
 
 
 def add_to_dic(address, location):
