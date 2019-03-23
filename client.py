@@ -179,10 +179,10 @@ def p2p():
 
                     # move location of device
                     if count % 2 == 0:
-                        myLocation = move_x(myLocation)
+                        myLocation = move_x(myLocation, 2)
                         count +=1
                     elif count % 2 == 1:
-                        myLocation = move_y(myLocation)
+                        myLocation = move_y(myLocation, 2)
                         count +=1
 
                     location = compute_client_location(location_list, myLocation, deviceTx)
@@ -196,18 +196,18 @@ def p2p():
             if debug: time.sleep(sleep_time)
 
 
-def move_x(location):
-    if location.x-1 < n:
-        location.x += 1
-    else: location.x -= 1
+def move_x(location, seed):
+    if location.x-seed < n:
+        location.x += seed
+    else: location.x -= seed
     return location
 
 
-def move_y(location):
-    if location.y - 1 < m:
-        location.y += 1
+def move_y(location, seed):
+    if location.y - seed < m:
+        location.y += seed
     else:
-        location.y -= 1
+        location.y -= seed
     return location
 
 
